@@ -7,8 +7,18 @@ $(function () {
 
     function create () {
         var close = $('<a>').attr('href', '#').addClass('close').text('Close'),
-            box = $('<div>').addClass('box').lorem(lorem).prepend(close);
-        return box;
+            $box = $('<div>').addClass('box').lorem(lorem).prepend(close);
+
+        // Make box resizable
+        $box.resizable({
+            handles: 'all',
+            containment: 'parent',
+            stop: function () {
+                $('#container').masonry('reload');
+            }
+        });
+
+        return $box;
     }
 
     function add () {
@@ -28,10 +38,14 @@ $(function () {
     add();
 
     // Add new boxes
-    $('#add').click(add);
+    $('#add').click(function () {
+        add();
+        return false;
+    });
 
     $('#container').delegate('.close', 'click', function () {
         var $box = $(this).parent();
         $('#container').masonry('remove', $box).masonry('reload');
+        return false;
     });
 });
