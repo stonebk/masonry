@@ -6,8 +6,14 @@ $(function () {
     };
 
     function create () {
-        var close = $('<a>').attr('href', '#').addClass('close').text('Close'),
-            $box = $('<div>').addClass('box').lorem(lorem).prepend(close);
+        var close = $('<a>')
+                .attr('href', '#')
+                .addClass('close')
+                .text('Close'),
+            $box = $('<div>')
+                .addClass('box')
+                .append($('<span>').lorem(lorem))
+                .prepend(close);
 
         // Make box resizable
         $box.resizable({
@@ -29,7 +35,8 @@ $(function () {
     $('#container').masonry({
         itemSelector: '.box',
         columnWidth: 100,
-        isAnimated: true
+        isAnimated: true,
+        gutterWidth: 5
     });
 
     add();
