@@ -19,15 +19,11 @@ body {
 .box {
     margin: 5px;
     padding: 5px;
-    padding-top: 25px;
     background-color: #ccc;
     float: left;
     width: 180px;
-    position: relative;
 }
 
 .box .close {
-    position: absolute;
-    top: 5px;
-    left: 5px;
+    display: block;
 }

@@ -7,7 +7,7 @@ $(function () {
 
     function create () {
         var close = $('<a>').attr('href', '#').addClass('close').text('Close'),
-            box = $('<div>').addClass('box').lorem(lorem).append(close);
+            box = $('<div>').addClass('box').lorem(lorem).prepend(close);
         return box;
     }
 
