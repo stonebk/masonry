@@ -10,25 +10,26 @@ body {
 }
 
 #container-wrap {
-    padding: 10px;
-    padding-bottom: 0;
+    padding: 5px;
     background-color: black;
     margin: 15px 0;
 }
 
 #container {
+    overflow-x: inherit !important;
+    overflow-y: inherit !important;
 }
 
-.box {
-    padding: 5px;
+.box-wrap {
+    margin: 5px;
     background-color: #ccc;
     float: left;
     width: 190px;
-    margin-bottom: 10px;
+    height: 190px
 }
 
-.box .close {
-    display: block;
+.box {
+    margin: 5px;
 }
 
 /*

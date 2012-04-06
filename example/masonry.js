@@ -12,19 +12,32 @@ $(function () {
                 .text('Close'),
             $box = $('<div>')
                 .addClass('box')
-                .append($('<span>').lorem(lorem))
-                .prepend(close);
+                .append($('<div>').lorem(lorem))
+                .prepend(close),
+            $wrap = $('<div>')
+                .addClass('box-wrap')
+                .append($box);
 
         // Make box resizable
-        $box.resizable({
+        $wrap.resizable({
             handles: 'all',
-            containment: 'parent',
+            grid: 100,
             stop: function () {
-                $('#container').masonry('reload');
+                var $this = $(this),
+                    $container = $('#container'),
+                    wthis = $this.width(),
+                    owthis = $this.outerWidth(true),
+                    wcontainer = $container.width();
+
+                if (wthis > wcontainer) {
+                    $this.css('width', wthis - (owthis - wcontainer));
+                }
+
+                $container.masonry('reload');
             }
         });
 
-        return $box;
+        return $wrap;
     }
 
     function add () {
@@ -33,10 +46,9 @@ $(function () {
 
     // Initialize masonry
     $('#container').masonry({
-        itemSelector: '.box',
+        itemSelector: '.box-wrap',
         columnWidth: 100,
-        isAnimated: true,
-        gutterWidth: 5
+        isAnimated: true
     });
 
     add();
@@ -51,7 +63,7 @@ $(function () {
     });
 
     $('#container').delegate('.close', 'click', function () {
-        var $box = $(this).parent();
+        var $box = $(this).closest('.box-wrap');
         $('#container').masonry('remove', $box).masonry('reload');
         return false;
     });
