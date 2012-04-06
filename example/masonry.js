@@ -29,7 +29,7 @@ $(function () {
                     owthis = $this.outerWidth(true),
                     wcontainer = $container.width();
 
-                if (wthis > wcontainer) {
+                if (owthis > wcontainer) {
                     $this.css('width', wthis - (owthis - wcontainer));
                 }
 
