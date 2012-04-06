@@ -23,23 +23,25 @@ $(function () {
             handles: 'all',
             grid: 100,
             stop: function () {
-                var $this = $(this),
-                    $container = $('#container'),
-                    wthis = $this.width(),
-                    owthis = $this.outerWidth(true),
-                    margin = owthis - wthis,
-                    wcontainer = $container.width(),
-                    grid = $this.resizable('option', 'grid')[0];
-
-                if (owthis > wcontainer) {
-                    $this.css('width', wcontainer - (wcontainer % grid) - margin);
-                }
-
-                $container.masonry('reload');
+                resize($(this));
+                $('#container').masonry('reload');
             }
         });
 
         return $wrap;
+    }
+
+    function resize ($box) {
+        var $container = $('#container'),
+            wthis = $box.width(),
+            owthis = $box.outerWidth(true),
+            margin = owthis - wthis,
+            wcontainer = $container.width(),
+            grid = $box.resizable('option', 'grid')[0];
+
+        if (owthis > wcontainer) {
+            $box.css('width', wcontainer - (wcontainer % grid) - margin);
+        }
     }
 
     function add () {
@@ -57,6 +59,37 @@ $(function () {
     add();
     add();
     add();
+
+    function refresh () {
+        var $boxes = $('.box-wrap'),
+            total = $boxes.length,
+            count = 0;
+        $('.box-wrap').each(function () {
+            resize($(this));
+            count += 1;
+            if (count === total) {
+                $('#container').masonry('reload');
+            }
+        });
+    }
+
+    // Prevent other resize events from propagating to parent
+    $('body').resize(function (eve) {
+        // Refresh on any resize could be a compelling effect too!
+        eve.stopPropagation();
+    });
+
+    // Detect to window resizes and the fix the size of boxes if they are too
+    // big for the container
+    var to = false;
+    $(window).resize(function () {
+        if (to !== false) {
+            clearTimeout(to);
+        }
+        to = setTimeout(function () {
+            refresh();
+        }, 20);
+    });
 
     // Add new boxes
     $('#add').click(function () {
