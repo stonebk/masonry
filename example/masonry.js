@@ -27,10 +27,12 @@ $(function () {
                     $container = $('#container'),
                     wthis = $this.width(),
                     owthis = $this.outerWidth(true),
-                    wcontainer = $container.width();
+                    margin = owthis - wthis,
+                    wcontainer = $container.width(),
+                    grid = $this.resizable('option', 'grid')[0];
 
                 if (owthis > wcontainer) {
-                    $this.css('width', wthis - (owthis - wcontainer));
+                    $this.css('width', wcontainer - (wcontainer % grid) - margin);
                 }
 
                 $container.masonry('reload');
