@@ -19,13 +19,39 @@ $(function () {
                 .append($box);
 
         // Make box resizable
-        $wrap.resizable({
-            handles: 'all',
-            stop: function () {
-                resize($(this));
-                $('#container').masonry('reload');
-            }
-        });
+        $wrap
+            .resizable({
+                handles: 'all',
+                stop: function () {
+                    resize($(this));
+                    $('#container').masonry('reload');
+                }
+            })
+            .draggable({
+                stop: function (eve, ui) {
+                    var $boxes = ui.helper.siblings(),
+                        $box, i, offset, bottom, middle;
+
+                    for (i = 0; i < $boxes.length; i += 1) {
+                        $box = $boxes.eq(i);
+                        offset = $box.offset();
+                        middle = offset.left + ($box.width() / 2);
+                        bottom = offset.top + $box.height();
+
+                        if (eve.pageX < middle && eve.pageY < bottom) {
+                            $box.before(ui.helper);
+                            break;
+                        }
+                    }
+
+                    // Reached the end of the list - move box to end of DOM
+                    if (i === $boxes.length) {
+                        $('#container').append(ui.helper);
+                    }
+
+                    $('#container').masonry('reload');
+                }
+            });
 
         return $wrap;
     }

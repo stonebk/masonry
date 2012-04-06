@@ -30,6 +30,11 @@ body {
     margin: 5px;
 }
 
+.ui-resizable-resizing,
+.ui-draggable-dragging {
+    z-index: 1000;
+}
+
 /*
  * jQuery UI Resizable 1.8.18
  *
