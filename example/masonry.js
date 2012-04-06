@@ -3,7 +3,7 @@ $(function () {
         type: 'words',
         amount: '25',
         ptags: false
-    };
+    }, GRID = 100;
 
     function create () {
         var close = $('<a>')
@@ -21,7 +21,6 @@ $(function () {
         // Make box resizable
         $wrap.resizable({
             handles: 'all',
-            grid: 100,
             stop: function () {
                 resize($(this));
                 $('#container').masonry('reload');
@@ -31,16 +30,46 @@ $(function () {
         return $wrap;
     }
 
+    /**
+     * The resize function provides equivalent resizable 'containment' and
+     *     'grid' functionality with a few modifications. Containment allows
+     *     resize outside of the container vertically, but not horizontally.
+     *     Grid allows snap to functionality but only snaps on stop, allowing
+     *     smooth resizing.
+     */
     function resize ($box) {
         var $container = $('#container'),
-            wthis = $box.width(),
-            owthis = $box.outerWidth(true),
-            margin = owthis - wthis,
-            wcontainer = $container.width(),
-            grid = $box.resizable('option', 'grid')[0];
+            wbox = $box.width(),             // Width of box
+            owbox = $box.outerWidth(true),   // Width of box (including margin)
+            wmargin = owbox - wbox,          // Horizontal margin
+            wcontainer = $container.width(), // Width of container
+            hbox = $box.height(),            // Height of box
+            ohbox = $box.outerHeight(true),  // Height of box (including margin)
+            hmargin = ohbox - hbox,          // Vertical margin
+            remainder;
 
-        if (owthis > wcontainer) {
-            $box.css('width', wcontainer - (wcontainer % grid) - margin);
+        // Resize horizontally
+        if (owbox > wcontainer) {
+            $box.css('width', wcontainer - (wcontainer % GRID) - wmargin);
+        } else {
+            remainder = owbox % GRID;
+            if (remainder > GRID / 2) {
+                // Round up
+                $box.css('width', owbox - remainder - wmargin + GRID);
+            } else {
+                // Round down
+                $box.css('width', owbox - remainder - wmargin);
+            }
+        }
+
+        // Resize vertically
+        remainder = ohbox % GRID;
+        if (remainder > GRID / 2) {
+            // Round up
+            $box.css('height', ohbox - remainder - hmargin + GRID);
+        } else {
+            // Round down
+            $box.css('height', ohbox - remainder - hmargin);
         }
     }
 
