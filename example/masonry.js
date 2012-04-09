@@ -27,7 +27,9 @@ $(function () {
     });
 
     // Initialize masonry window management
-    $('#container').masonrywm({ /* Settings */ });
+    $('#container').masonrywm({
+        itemSelector: '.box-wrap'
+    });
 
     // Add some initial boxes
     add();

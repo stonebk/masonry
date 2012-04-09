@@ -199,7 +199,7 @@
          *     using the child elements of the container.
          * @type string
          */
-        itemSelector: '.box-wrap'
+        itemSelector: undefined
     };
 
     /**
