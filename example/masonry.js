@@ -17,7 +17,7 @@ $(function () {
                 .addClass('box-wrap')
                 .append($box);
 
-        $('#container').masonrywm('add', $wrap);
+        $('#container').mwm('add', $wrap);
     }
 
     // Handler to add new boxes
@@ -27,7 +27,7 @@ $(function () {
     });
 
     // Initialize masonry window management
-    $('#container').masonrywm({
+    $('#container').mwm({
         itemSelector: '.box-wrap'
     });
 
@@ -39,7 +39,7 @@ $(function () {
 
     $('#container').delegate('.close', 'click', function () {
         var $box = $(this).closest('.box-wrap');
-        $('#container').masonrywm('remove', $box);
+        $('#container').mwm('remove', $box);
         return false;
     });
 });

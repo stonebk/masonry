@@ -1,5 +1,5 @@
 /**
- * @fileoverview jquery.masonrywm.js is a jQuery plugin for window management
+ * @fileoverview jquery.mwm.js is a jQuery plugin for window management
  *     leveraging the jquery.masonry.js layout plugin.
  * @author brstone@cisco.com (Brian Stone)
  */
@@ -11,13 +11,13 @@
      * @param {object} container The container element.
      * @constructor
      */
-    $.masonrywm = function (opts, container) {
+    $.mwm = function (opts, container) {
 
         /**
          * The options for this instance.
          * @type object
          */
-        this.opts = $.extend(true, {}, $.masonrywm.defaults, opts);
+        this.opts = $.extend(true, {}, $.mwm.defaults, opts);
 
         /**
          * The jQuery wrapped container element.
@@ -30,9 +30,9 @@
     };
 
     /**
-     * Initialize the masonrywm object.
+     * Initialize the mwm object.
      */
-    $.masonrywm.prototype._init = function () {
+    $.mwm.prototype._init = function () {
         var that = this,
             timeout = false;
 
@@ -64,7 +64,7 @@
     /**
      * Refresh all windows.
      */
-    $.masonrywm.prototype._refresh = function () {
+    $.mwm.prototype._refresh = function () {
         var that = this,
             $windows = $(this.opts.itemSelector),
             total = $windows.length,
@@ -83,7 +83,7 @@
      * Add a new window to the container.
      * @param {object} $window Window to add to container.
      */
-    $.masonrywm.prototype.add = function ($window) {
+    $.mwm.prototype.add = function ($window) {
         var that = this;
 
         $window
@@ -130,7 +130,7 @@
      *     Grid allows snap to functionality but only snaps on stop, allowing
      *     smooth resizing.
      */
-    $.masonrywm.prototype._resize = function ($box) {
+    $.mwm.prototype._resize = function ($box) {
         var $container = $('#container'),
             wbox = $box.width(),             // Width of box
             owbox = $box.outerWidth(true),   // Width of box (including margin)
@@ -171,7 +171,7 @@
      * Remove a window from the container.
      * @param {object} $window The window to remove from the container.
      */
-    $.masonrywm.prototype.remove = function ($window) {
+    $.mwm.prototype.remove = function ($window) {
         this.$container.masonry('remove', $window).masonry('reload');
     };
 
@@ -180,7 +180,7 @@
      * @static
      * @class
      */
-    $.masonrywm.defaults = {
+    $.mwm.defaults = {
 
         /**
          * Grid size used for masonry columns and snap to positions.
@@ -205,11 +205,11 @@
     /**
      * Add masonry window management as a plugin to jQuery.
      */
-    $.fn.masonrywm = function (method) {
+    $.fn.mwm = function (method) {
         if (typeof method === 'string') {
             var args = Array.prototype.slice.call(arguments, 1);
             this.each(function () {
-                var instance = $.data(this, 'masonrywm');
+                var instance = $.data(this, 'mwm');
                 if (!instance) {
                     console.log('No instance');
                     return;
@@ -222,9 +222,9 @@
             });
         } else {
             this.each(function () {
-                var instance = $.data(this, 'masonrywm');
+                var instance = $.data(this, 'mwm');
                 if (!instance) {
-                    $.data(this, 'masonrywm', new $.masonrywm(method, this));
+                    $.data(this, 'mwm', new $.mwm(method, this));
                 }
             });
         }
