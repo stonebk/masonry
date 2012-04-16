@@ -80,43 +80,99 @@
     };
 
     /**
+     * Reload the windows.
+     */
+    $.mwm.prototype.reload = function () {
+        this.$container.masonry('reload');
+    };
+
+    /**
      * Add a new window to the container.
      * @param {object} $window Window to add to container.
+     * @param {object} opts Options to be applied to this window.
      */
-    $.mwm.prototype.add = function ($window) {
+    $.mwm.prototype.add = function ($window, opts) {
         var that = this;
 
         $window
             .resizable({
-                handles: 'all',
+                minWidth: this.opts.minWidth,
+                minHeight: this.opts.minHeight,
+                start: function () {
+                    // Callback
+                    if (opts && opts.resizeStart) {
+                        opts.resizeStart();
+                    }
+                },
                 stop: function () {
                     that._resize($(this));
                     that.$container.masonry('reload');
+
+                    // Callback
+                    if (opts && opts.resizeStop) {
+                        opts.resizeStop();
+                    }
                 }
             })
             .draggable({
+                handle: this.opts.handle,
+                start: function (eve, ui) {
+                    // Callback
+                    if (opts && opts.dragStart) {
+                        opts.dragStart();
+                    }
+
+                    var $this = $(this);
+                    $this.data('mwm.offset', $this.offset());
+                },
                 stop: function (eve, ui) {
-                    var $boxes = ui.helper.siblings(),
-                        $box, i, offset, bottom, middle;
+                    var $this = $(this),
+                        offset, myOffset = $this.offset(),
+                        x, myX = myOffset.left + ($this.width() / 2),
+                        y, myY = myOffset.top,
+                        $box, $boxes = $(that.opts.itemSelector),
+                        i, equal;
 
                     for (i = 0; i < $boxes.length; i += 1) {
                         $box = $boxes.eq(i);
-                        offset = $box.offset();
-                        middle = offset.left + ($box.width() / 2);
-                        bottom = offset.top + $box.height();
+                        equal = $box.get(0) === $this.get(0);
 
-                        if (eve.pageX < middle && eve.pageY < bottom) {
-                            $box.before(ui.helper);
+                        // If elements are the same, use the original offset.
+                        // The same element must be completely outside of its
+                        // own footprint to be compared against lesser elements.
+                        if (equal) {
+                            offset = $box.data('mwm.offset');
+
+                            // Comparing midpoints on the x plane, so add width
+                            // to midpoint
+                            x = offset.left + ($box.width() / 2) + $box.width();
+                        } else {
+                            offset = $box.offset();
+                            x = offset.left + ($box.width() / 2);
+                        }
+
+                        y = offset.top + $box.height();
+
+                        if (myX < x && myY < y) {
+                            // No change needed if this is the same element
+                            if (!equal) {
+                                $box.before($this);
+                            }
                             break;
                         }
                     }
 
                     // Reached the end of the list - move box to end of DOM
                     if (i === $boxes.length) {
-                        that.$container.append(ui.helper);
+                        that.$container.append($this);
                     }
 
                     that.$container.masonry('reload');
+
+                    // Callback
+                    if (opts && opts.dragStop) {
+                        opts.dragStop();
+                    }
                 }
             });
 
@@ -131,7 +187,7 @@
      *     smooth resizing.
      */
     $.mwm.prototype._resize = function ($box) {
-        var $container = $('#container'),
+        var $container = this.$container,
             wbox = $box.width(),             // Width of box
             owbox = $box.outerWidth(true),   // Width of box (including margin)
             wmargin = owbox - wbox,          // Horizontal margin
@@ -140,21 +196,30 @@
             ohbox = $box.outerHeight(true),  // Height of box (including margin)
             hmargin = ohbox - hbox,          // Vertical margin
             grid = this.opts.grid,
-            remainder;
+            wmin = $box.resizable('option', 'minWidth'),
+            width, remainder;
 
         // Resize horizontally
         if (owbox > wcontainer) {
-            $box.css('width', wcontainer - (wcontainer % grid) - wmargin);
+            width = wcontainer - (wcontainer % grid) - wmargin;
         } else {
             remainder = owbox % grid;
             if (remainder > grid / 2) {
                 // Round up
-                $box.css('width', owbox - remainder - wmargin + grid);
+                width = owbox - remainder - wmargin + grid;
             } else {
                 // Round down
-                $box.css('width', owbox - remainder - wmargin);
+                width = owbox - remainder - wmargin;
             }
         }
+
+        // Make sure size is at least min width
+        if (width < wmin) {
+            width = wmin;
+        }
+
+        // Resize
+        $box.css('width', width);
 
         // Resize vertically
         remainder = ohbox % grid;
